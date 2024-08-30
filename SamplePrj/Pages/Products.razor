@@ -1,0 +1,59 @@
+﻿@page "/products"
+@using Microsoft.EntityFrameworkCore
+@using SamplePrj.Data
+@inject ApplicationDbContext DbContext
+@implements IDisposable
+
+<h3>Products</h3>
+
+@if (products == null)
+{
+    <p>Loading...</p>
+}
+else if (products.Count == 0)
+{
+    <p>No products found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in products)
+            {
+                <tr>
+                    <td>@product.Name</td>
+                    <td>@product.Price</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Product> products;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            products = await DbContext.Products.ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            // Handle any exceptions (e.g., log or display error)
+            Console.WriteLine($"Error loading products: {ex.Message}");
+            products = new List<Product>(); // Initialize empty list or handle accordingly
+        }
+    }
+
+    public void Dispose()
+    {
+        // Clean up any resources if needed
+    }
+}
